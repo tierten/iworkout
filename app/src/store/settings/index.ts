@@ -171,6 +171,9 @@ export const exportPlainText = createAction<{ format: PlaintextExportFormat }>(
   'exportPlainText',
 );
 
+export const importFromClaudeJson = createAction('importFromClaudeJson');
+export const exportForClaude = createAction('exportForClaude');
+
 export const executeRemoteBackup = createAction<{
   settings?: RemoteBackupSettings;
   force?: boolean;

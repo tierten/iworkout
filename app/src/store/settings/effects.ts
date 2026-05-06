@@ -28,6 +28,7 @@ import { addExportBackupEffects } from '@/store/settings/export-backup-effects';
 import { addExportPlaintextEffects } from '@/store/settings/export-plaintext-effects';
 import { addImportBackupEffects } from '@/store/settings/import-backup-effects';
 import { addRemoteBackupEffects } from '@/store/settings/remote-backup-effects';
+import { addClaudeJsonEffects } from '@/store/settings/claude-json-effects';
 import Purchases from 'react-native-purchases';
 import { I18nManager, Platform } from 'react-native';
 import { detectLanguageFromDateLocale } from '@/utils/language-detector';
@@ -350,4 +351,5 @@ export function applySettingsEffects(addEffect: AddEffectFn) {
   addExportBackupEffects(addEffect);
   addImportBackupEffects(addEffect);
   addRemoteBackupEffects(addEffect);
+  addClaudeJsonEffects(addEffect);
 }
