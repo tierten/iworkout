@@ -20,6 +20,7 @@ interface PotentialSetCounterProps {
   weightIncrement: BigNumber;
   maxReps: number;
   previousRepCount: number | undefined;
+  previousWeight: Weight | undefined;
   toStartNext: boolean;
   isReadonly: boolean;
 
@@ -164,6 +165,24 @@ export default function PotentialSetCounter(props: PotentialSetCounterProps) {
               <Text style={{ color: colors.onSurface, ...font['text-sm'] }}>
                 <WeightFormat weight={props.set.weight} />
               </Text>
+              {repCountValue === undefined && props.previousWeight !== undefined && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: spacing[0.5],
+                  }}
+                >
+                  <Icon
+                    source={'history'}
+                    size={10}
+                    color={colors.onSurface + '66'}
+                  />
+                  <Text style={{ color: colors.onSurface + '66', ...font['text-xs'] }}>
+                    {props.previousWeight.shortLocaleFormat(2)}
+                  </Text>
+                </View>
+              )}
             </TouchableRipple>
           </View>
           <WeightDialog

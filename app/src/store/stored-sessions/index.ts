@@ -1,4 +1,4 @@
-import { RecordedExercise, Session } from '@/models/session-models';
+import { RecordedExercise, RecordedWeightedExercise, Session } from '@/models/session-models';
 import {
   NormalizedName,
   NormalizedNameKey,
@@ -14,9 +14,10 @@ import {
   WritableDraft,
 } from '@reduxjs/toolkit';
 import Enumerable from 'linq';
-import { WeightUnit } from '@/models/weight';
+import { Weight, WeightUnit } from '@/models/weight';
 import { TemporalComparer } from '@/models/comparers';
 import { ExerciseDescriptor } from '@/models/exercise-models';
+import { LocalDateRange } from '@/models/time-models';
 
 export interface WeightMigrateableExercise {
   name: string;
@@ -329,6 +330,57 @@ export const selectMuscles = createSelector([selectExercises], (exercises) =>
 export const selectExerciseIds = createSelector(
   [selectExercises],
   (exercises) => Object.keys(exercises),
+);
+
+export interface MuscleGroupVolume {
+  muscle: string;
+  volume: Weight;
+}
+
+export const selectMuscleGroupVolume = createSelector(
+  [
+    storedSessionsSlice.selectors.selectSessions,
+    storedSessionsSlice.selectors.selectExercises,
+    (_: unknown, timeRange: LocalDateRange | 'all-time') => timeRange,
+  ],
+  (sessions, exercises, timeRange): MuscleGroupVolume[] => {
+    const sessionList = Object.values(sessions).filter((s) => {
+      if (timeRange === 'all-time') return true;
+      return (
+        (s.date.isAfter(timeRange.from) || s.date.isEqual(timeRange.from)) &&
+        (s.date.isBefore(timeRange.to) || s.date.isEqual(timeRange.to))
+      );
+    });
+
+    const exerciseList = Object.values(exercises);
+    const volumeByMuscle = new Map<string, Weight>();
+
+    for (const session of sessionList) {
+      for (const ex of session.recordedExercises) {
+        if (!(ex instanceof RecordedWeightedExercise) || !ex.isStarted) continue;
+        const normalizedKey = NormalizedName.fromExerciseBlueprint(
+          ex.blueprint,
+        ).toString();
+        const descriptor = exerciseList.find(
+          (e) => new NormalizedName(e.name).toString() === normalizedKey,
+        );
+        const muscles = descriptor?.muscles ?? [];
+        const volume = ex.totalWeightLifted;
+        for (const muscle of muscles) {
+          const prev = volumeByMuscle.get(muscle);
+          volumeByMuscle.set(muscle, prev ? prev.plus(volume) : volume);
+        }
+      }
+    }
+
+    return [...volumeByMuscle.entries()]
+      .map(([muscle, volume]) => ({ muscle, volume }))
+      .sort((a, b) => {
+        if (b.volume.isGreaterThan(a.volume)) return 1;
+        if (a.volume.isGreaterThan(b.volume)) return -1;
+        return 0;
+      });
+  },
 );
 
 export const storedSessionsReducer = storedSessionsSlice.reducer;

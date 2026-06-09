@@ -16,6 +16,7 @@ import {
   WeightedExerciseStatistics,
   WeightedStatisticOverTime,
 } from '@/store/stats';
+import { epleyOneRepMax } from '@/utils/one-rep-max';
 import { Duration, OffsetDateTime, ZoneId } from '@js-joda/core';
 import BigNumber from 'bignumber.js';
 import Enumerable from 'linq';
@@ -138,13 +139,7 @@ export function calculateStats(
   const exerciseStatsMap = new Map<string, ExerciseStatAcc>();
 
   function calculateOneRepMax(ps: PotentialSet): Weight {
-    // One rep max formula (Epley): 1RM = weight * (1 + reps/30)
-    const reps = ps.set!.repsCompleted;
-    const weight = ps.weight;
-    const oneRepMax = weight.multipliedBy(
-      new BigNumber(1).plus(new BigNumber(reps).div(30)),
-    );
-    return oneRepMax;
+    return epleyOneRepMax(ps.weight, ps.set!.repsCompleted);
   }
 
   for (const session of sessionsWithExercises) {

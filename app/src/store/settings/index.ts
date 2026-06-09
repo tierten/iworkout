@@ -2,6 +2,7 @@ import { LiftLog } from '@/gen/proto';
 import { BackupData, FeedBackupData } from '@/models/backup';
 import { RemoteData } from '@/models/remote';
 import { WeightUnit } from '@/models/weight';
+import { OneRepMaxFormula } from '@/utils/one-rep-max';
 import { DayOfWeek, Instant } from '@js-joda/core';
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SQLiteDatabase } from 'expo-sqlite';
@@ -36,6 +37,7 @@ interface SettingsState {
   notesExpandedByDefault: boolean;
   keepScreenAwakeDuringWorkout: boolean;
   exportToHealthAggregator: boolean;
+  oneRepMaxFormula: OneRepMaxFormula;
 }
 
 interface RemoteBackupSettings {
@@ -70,6 +72,7 @@ const initialState: SettingsState = {
   notesExpandedByDefault: false,
   keepScreenAwakeDuringWorkout: false,
   exportToHealthAggregator: false,
+  oneRepMaxFormula: 'epley',
 };
 
 const settingsSlice = createSlice({
@@ -145,6 +148,9 @@ const settingsSlice = createSlice({
     setExportToHealthAggregator(state, action: PayloadAction<boolean>) {
       state.exportToHealthAggregator = action.payload;
     },
+    setOneRepMaxFormula(state, action: PayloadAction<OneRepMaxFormula>) {
+      state.oneRepMaxFormula = action.payload;
+    },
   },
   selectors: {
     selectPreferredWeightUnit: (state): WeightUnit =>
@@ -203,6 +209,7 @@ export const {
   setExportToHealthAggregator,
   setShowPostWorkoutSummary,
   setTrueBlackDarkTheme,
+  setOneRepMaxFormula,
 } = settingsSlice.actions;
 
 export const { selectPreferredWeightUnit } = settingsSlice.selectors;

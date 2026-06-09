@@ -11,6 +11,7 @@ import {
   setKeepScreenAwakeDuringWorkout,
   setLastBackup,
   setNotesExpandedByDefault,
+  setOneRepMaxFormula,
   setPreferredLanguage,
   setProToken,
   setRemoteBackupSettings,
@@ -67,6 +68,7 @@ export function applySettingsEffects(addEffect: AddEffectFn) {
         exportToHealthAggregator,
         showPostWorkoutSummary,
         trueBlackDarkTheme,
+        oneRepMaxFormula,
       ] = await Promise.all([
         preferenceService.getUseImperialUnits(),
         preferenceService.getShowBodyweight(),
@@ -88,6 +90,7 @@ export function applySettingsEffects(addEffect: AddEffectFn) {
         preferenceService.getExportToHealthAggregator(),
         preferenceService.getShowPostWorkoutSummary(),
         preferenceService.getTrueBlackDarkTheme(),
+        preferenceService.getOneRepMaxFormula(),
       ]);
       dispatch(setColorSchemeSeed(colorSchemeSeed));
       dispatch(setUseImperialUnits(useImperialUnits));
@@ -119,6 +122,7 @@ export function applySettingsEffects(addEffect: AddEffectFn) {
       dispatch(setExportToHealthAggregator(exportToHealthAggregator));
       dispatch(setShowPostWorkoutSummary(showPostWorkoutSummary));
       dispatch(setTrueBlackDarkTheme(trueBlackDarkTheme));
+      dispatch(setOneRepMaxFormula(oneRepMaxFormula));
 
       if (Platform.OS === 'ios') {
         Purchases.configure({
@@ -271,6 +275,14 @@ export function applySettingsEffects(addEffect: AddEffectFn) {
     async (action, { stateAfterReduce, extra: { preferenceService } }) => {
       if (stateAfterReduce.settings.isHydrated) {
         await preferenceService.setTrueBlackDarkTheme(action.payload);
+      }
+    },
+  );
+  addEffect(
+    setOneRepMaxFormula,
+    async (action, { stateAfterReduce, extra: { preferenceService } }) => {
+      if (stateAfterReduce.settings.isHydrated) {
+        await preferenceService.setOneRepMaxFormula(action.payload);
       }
     },
   );

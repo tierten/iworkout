@@ -1,5 +1,6 @@
 import { KeyValueStore } from '@/services/key-value-store';
 import { ColorSchemeSeed } from '@/store/settings';
+import { OneRepMaxFormula } from '@/utils/one-rep-max';
 import { DayOfWeek, Instant } from '@js-joda/core';
 import { match, P } from 'ts-pattern';
 
@@ -282,6 +283,15 @@ export class PreferenceService {
       .with('friday', () => DayOfWeek.FRIDAY)
       .with('saturday', () => DayOfWeek.SATURDAY)
       .otherwise(() => DayOfWeek.SUNDAY);
+  }
+
+  async getOneRepMaxFormula(): Promise<OneRepMaxFormula> {
+    const value = await this.keyValueStore.getItem('oneRepMaxFormula');
+    return value === 'brzycki' ? 'brzycki' : 'epley';
+  }
+
+  async setOneRepMaxFormula(formula: OneRepMaxFormula): Promise<void> {
+    await this.keyValueStore.setItem('oneRepMaxFormula', formula);
   }
 
   getPreferredLanguage() {

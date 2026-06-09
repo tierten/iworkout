@@ -2,6 +2,7 @@ import FullHeightScrollView from '@/components/layout/full-height-scroll-view';
 import Icon from '@/components/presentation/foundation/gesture-wrappers/icon';
 import { Remote } from '@/components/presentation/foundation/remote';
 import { ExerciseListSummary } from '@/components/presentation/stats/exercise-list-summary';
+import MuscleGroupVolumeCard from '@/components/presentation/stats/muscle-group-volume-card';
 import SingleValueStatisticCard from '@/components/presentation/stats/single-value-statistic-card';
 import { SingleValueStatisticsGrid } from '@/components/presentation/stats/single-value-statistics-grid';
 import { TimePeriodSelector } from '@/components/presentation/stats/time-period-selector';
@@ -15,6 +16,7 @@ import {
   selectOverallView,
   setOverallViewTime,
 } from '@/store/stats';
+import { selectMuscleGroupVolume } from '@/store/stored-sessions';
 import { formatDuration } from '@/utils/format-date';
 import { useTranslate } from '@tolgee/react';
 import { Stack, useFocusEffect } from 'expo-router';
@@ -52,9 +54,19 @@ export default function StatsPage() {
 }
 
 function LoadedStats({ stats }: { stats: GranularStatisticView }) {
+  const timePeriod = useAppSelector((x) => x.stats.overallViewTime);
+  const muscleVolumes = useAppSelector((s) =>
+    selectMuscleGroupVolume(s, timePeriod),
+  );
+
   return (
     <View>
       <OverallStatsGrid stats={stats} />
+      {muscleVolumes.length > 0 && (
+        <TitledSection title="Volume by Muscle Group">
+          <MuscleGroupVolumeCard muscleVolumes={muscleVolumes} />
+        </TitledSection>
+      )}
       <ExerciseListSummary stats={stats} />
     </View>
   );
