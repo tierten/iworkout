@@ -7,20 +7,16 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace LiftLog.Tests.Api.Integration;
 
+// These are live end-to-end tests that call the real Anthropic API and so
+// require an AnthropicApiKey. They are skipped by default (and in CI) so the
+// API key never has to be configured as a CI secret. To run them locally,
+// remove this [Skip] and set the AnthropicApiKey environment variable.
+[Skip("Requires a live Anthropic API key; not run in CI")]
 [ClassDataSource<WebApplicationFactory<Program>>(Shared = SharedType.PerClass)]
 public class AiWorkoutPlannerIntegrationTests
 {
     private readonly WebApplicationFactory<Program> _factory;
     private const string TestWebAuthKey = "test-web-auth-key-12345";
-
-    [Before(Test)]
-    public async Task SkipIfNoApiKey()
-    {
-        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("AnthropicApiKey")))
-        {
-            await Assert.SkipAsync("AnthropicApiKey environment variable is not set");
-        }
-    }
 
     public AiWorkoutPlannerIntegrationTests(WebApplicationFactory<Program> factory)
     {
