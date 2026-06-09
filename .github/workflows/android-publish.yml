@@ -47,6 +47,10 @@ jobs:
         run: npm run prebuild
         working-directory: ./app
 
+      - name: Increase Gradle heap
+        run: echo "org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g" >> android/gradle.properties
+        working-directory: ./app
+
       - name: Put keystore
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}

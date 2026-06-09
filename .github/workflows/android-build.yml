@@ -35,6 +35,16 @@ jobs:
         run: npm run prebuild
         working-directory: ./app
 
-      - name: Build Android
-        run: ./gradlew build
+      - name: Increase Gradle heap
+        run: echo "org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g" >> android/gradle.properties
+        working-directory: ./app
+
+      - name: Build release APK
+        run: ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a
         working-directory: ./app/android
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-release
+          path: app/android/app/build/outputs/apk/release/app-release.apk
