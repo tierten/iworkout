@@ -82,7 +82,7 @@ export default function Settings() {
           left={(props) => <List.Icon icon={'bolt'} {...props} />}
         ></List.Item>
         <List.Item
-          onPress={() => push('/(tabs)/settings/ai/claude-json')}
+          onPress={() => push('/settings/ai/claude-json')}
           title="Claude JSON Import / Export"
           description="Import or export workout plans as Claude AI JSON"
           left={(props) => <List.Icon icon={'fileUpload'} {...props} />}

@@ -48,7 +48,7 @@ export default function MuscleGroupVolumeCard({
                 <View
                   style={{
                     height: '100%',
-                    width: `${(barWidth * 100).toFixed(1)}%`,
+                    width: `${(barWidth * 100).toFixed(1)}%` as `${number}%`,
                     backgroundColor: colors.primary,
                     borderRadius: spacing[0.5],
                   }}

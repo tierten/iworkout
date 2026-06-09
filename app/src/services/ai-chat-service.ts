@@ -140,7 +140,7 @@ type JsonResponse<T> = T extends string | number | boolean | null
           ? { [K in keyof T]: JsonResponse<T[K]> }
           : never;
 
-function toAiWorkoutPlan(
+export function toAiWorkoutPlan(
   aiPlan: JsonResponse<AiWorkoutPlan>,
 ): AiWorkoutPlan {
   return {
