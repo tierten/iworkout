@@ -29,6 +29,10 @@ jobs:
         working-directory: ./app
         run: npm ci
 
+      - name: Prebuild
+        working-directory: ./app
+        run: npm run prebuild
+
       - name: Build JS bundle (optional)
         working-directory: ./app
         run: npx expo export --platform ios || echo "Skipped"
