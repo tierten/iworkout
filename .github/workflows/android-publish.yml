@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY: ${{secrets.EXPO_REVENUECAT_GOOGLE_API_KEY}}
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - uses: actions/checkout@v6
         with:
