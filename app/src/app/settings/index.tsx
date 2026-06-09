@@ -72,6 +72,13 @@ export default function Settings() {
             <List.Icon icon={'settingsBackupRestore'} {...props} />
           )}
         ></List.Item>
+
+        <List.Item
+          onPress={() => push('/settings/ai/import-plan')}
+          title="Import AI plan"
+          description="Paste a workout plan code from your AI assistant"
+          left={(props) => <List.Icon icon={'contentPasteSearch'} {...props} />}
+        ></List.Item>
       </List.Section>
 
       <List.Section title={t('settings.pro_features.title')}>

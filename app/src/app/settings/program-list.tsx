@@ -8,7 +8,7 @@ import { uuid } from '@/utils/uuid';
 import { LocalDate } from '@js-joda/core';
 import { useTranslate } from '@tolgee/react';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { FAB, List } from 'react-native-paper';
+import { Appbar, FAB, List } from 'react-native-paper';
 
 import { useDispatch } from 'react-redux';
 
@@ -49,7 +49,17 @@ export default function ProgramList() {
   );
   return (
     <FullHeightScrollView floatingChildren={floatingBottomContainer}>
-      <Stack.Screen options={{ title: t('plan.plans.title') }} />
+      <Stack.Screen
+        options={{
+          title: t('plan.plans.title'),
+          headerRight: () => (
+            <Appbar.Action
+              icon={'contentPasteSearch'}
+              onPress={() => push('/settings/ai/import-plan')}
+            />
+          ),
+        }}
+      />
       <List.Section>
         {ps.map(({ id }) => (
           <ProgramListItem key={id} id={id} isFocused={focusprogramId === id} />
