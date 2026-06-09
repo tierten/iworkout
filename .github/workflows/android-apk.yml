@@ -13,6 +13,12 @@ on:
         description: "Optional: tag name to publish a GitHub Release with the APK attached (leave blank to only upload it as a run artifact)"
         required: false
         type: string
+  # Temporary: auto-build the APK on pushes to this feature branch so the
+  # artifact is produced without needing the workflow on the default branch.
+  # Safe to remove once the workflow lives on the default branch.
+  push:
+    branches: [claude/workout-plan-generator-s6Klf]
+    paths: [.github/workflows/android-apk.yml]
 
 jobs:
   build:
