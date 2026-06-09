@@ -18,7 +18,6 @@ import {
 } from '@/store/stats';
 import { epleyOneRepMax } from '@/utils/one-rep-max';
 import { Duration, OffsetDateTime, ZoneId } from '@js-joda/core';
-import BigNumber from 'bignumber.js';
 import Enumerable from 'linq';
 
 export function calculateStats(

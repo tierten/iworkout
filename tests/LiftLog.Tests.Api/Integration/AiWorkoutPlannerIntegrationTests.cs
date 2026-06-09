@@ -13,6 +13,15 @@ public class AiWorkoutPlannerIntegrationTests
     private readonly WebApplicationFactory<Program> _factory;
     private const string TestWebAuthKey = "test-web-auth-key-12345";
 
+    [Before(Test)]
+    public async Task SkipIfNoApiKey()
+    {
+        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("AnthropicApiKey")))
+        {
+            await Assert.SkipAsync("AnthropicApiKey environment variable is not set");
+        }
+    }
+
     public AiWorkoutPlannerIntegrationTests(WebApplicationFactory<Program> factory)
     {
         _factory = TestFactoryHelper.CreateTestFactory(
