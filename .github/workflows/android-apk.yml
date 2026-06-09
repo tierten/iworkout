@@ -1,0 +1,67 @@
+name: Build APK (Downloadable)
+
+# Manually-triggered build that produces an installable, standalone Android APK
+# and uploads it as a downloadable artifact. No Play Store and no signing secrets
+# required: the release variant is signed with the default debug keystore, which
+# is fine for sideloading/testing. For a Play-Store-signed release, use
+# android-publish.yml with the ANDROID_KEYSTORE_* secrets instead.
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Optional: tag name to publish a GitHub Release with the APK attached (leave blank to only upload it as a run artifact)"
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: ./app/package-lock.json
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v3.2.2
+
+      - name: Install
+        run: npm ci
+        working-directory: ./app
+
+      - name: Prebuild
+        run: npm run prebuild
+        working-directory: ./app
+
+      - name: Raise Gradle heap (avoids the dex-merge OutOfMemoryError)
+        run: echo "org.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8" >> android/gradle.properties
+        working-directory: ./app
+
+      - name: Build release APK
+        run: ./gradlew assembleRelease
+        working-directory: ./app/android
+
+      - name: Upload APK as run artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: LiftLog-release-apk
+          path: app/android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
+      - name: Publish GitHub Release with the APK attached
+        if: ${{ inputs.release_tag != '' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.release_tag }}
+          files: app/android/app/build/outputs/apk/release/*.apk
