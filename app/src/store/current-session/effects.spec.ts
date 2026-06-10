@@ -102,7 +102,7 @@ describe('current-session effects', () => {
       expect(action.payload).toBe(true);
     });
 
-    it('logs and rethrows if keyValueStore throws', async () => {
+    it('logs, clears stored current session, and hydrates if keyValueStore throws', async () => {
       const kvStore = makeKeyValueStore({
         getItem: vi.fn().mockRejectedValue(new Error('storage failure')),
       });
@@ -118,7 +118,12 @@ describe('current-session effects', () => {
         'Failed to initialize current session state',
         expect.objectContaining({ message: 'storage failure' }),
       );
-      testBed.expectNotDispatched(setIsHydrated);
+      expect(kvStore.removeItem).toHaveBeenCalledWith(
+        'CurrentSessionStateV1-Version',
+      );
+      expect(kvStore.removeItem).toHaveBeenCalledWith('CurrentSessionStateV1');
+      const action = testBed.getDispatchedAction(setIsHydrated);
+      expect(action.payload).toBe(true);
     });
   });
 

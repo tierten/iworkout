@@ -66,7 +66,13 @@ export function applyCurrentSessionEffects(addEffect: AddEffectFn) {
         dispatch(setIsHydrated(true));
       } catch (e) {
         logger.error('Failed to initialize current session state', e);
-        throw e;
+        try {
+          await keyValueStore.removeItem(`${storageKey}-Version`);
+          await keyValueStore.removeItem(storageKey);
+        } catch (clearError) {
+          logger.error('Failed to clear current session state', clearError);
+        }
+        dispatch(setIsHydrated(true));
       }
     },
   );

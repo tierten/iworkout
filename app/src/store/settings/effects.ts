@@ -119,17 +119,23 @@ export function applySettingsEffects(addEffect: AddEffectFn) {
       dispatch(setShowPostWorkoutSummary(showPostWorkoutSummary));
       dispatch(setTrueBlackDarkTheme(trueBlackDarkTheme));
 
-      if (Platform.OS === 'ios') {
-        Purchases.configure({
-          apiKey: process.env.EXPO_PUBLIC_REVENUECAT_APPLE_API_KEY!,
-        });
-      } else if (Platform.OS === 'android') {
-        Purchases.configure({
-          apiKey: process.env.EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY!,
-        });
+      const revenueCatApiKey =
+        Platform.OS === 'ios'
+          ? process.env.EXPO_PUBLIC_REVENUECAT_APPLE_API_KEY
+          : Platform.OS === 'android'
+            ? process.env.EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY
+            : undefined;
+      if (revenueCatApiKey) {
+        Purchases.configure({ apiKey: revenueCatApiKey });
+      } else {
+        logger.warn('RevenueCat API key is not configured', {});
       }
       // migrate pro token to a revenuecat
-      if (proToken && !proToken.startsWith('$RCAnonymousID')) {
+      if (
+        revenueCatApiKey &&
+        proToken &&
+        !proToken.startsWith('$RCAnonymousID')
+      ) {
         try {
           const customerInfo = await Purchases.getCustomerInfo();
           await Purchases.syncPurchases();
